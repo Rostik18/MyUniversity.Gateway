@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MyUniversity.Gateway.Api.Configs;
+using MyUniversity.Gateway.Services.Configs;
+using MyUniversity.Gateway.Services.MessageClient;
 
 namespace MyUniversity.Gateway.Api.Extensions
 {
@@ -11,8 +12,9 @@ namespace MyUniversity.Gateway.Api.Extensions
             services.AddSingleton(configuration.GetSection(nameof(MessageClientConfigs)).Get<MessageClientConfigs>());
         }
 
-        public static void AddCustomServices(this IServiceCollection serviceCollection)
+        public static void AddCustomServices(this IServiceCollection services)
         {
+            services.AddSingleton<IMessageClient, MessageClient>();
 
         }
     }

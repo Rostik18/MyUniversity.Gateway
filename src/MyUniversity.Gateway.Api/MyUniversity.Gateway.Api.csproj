@@ -11,11 +11,19 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyUniversity.Gateway.Services\MyUniversity.Gateway.Services.csproj" />
+  </ItemGroup>
     
   <ItemGroup>
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+    
+  <ItemGroup>
+    <Folder Include="Configs\" />
   </ItemGroup>
 
 </Project>

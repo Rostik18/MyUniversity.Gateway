@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace MyUniversity.Gateway.Services.MessageClient
 {
     public interface IMessageClient
     {
+        Task<TRespond> RequestAsync<TRequest, TRespond>(string requestQueue, TRequest body);
     }
 }

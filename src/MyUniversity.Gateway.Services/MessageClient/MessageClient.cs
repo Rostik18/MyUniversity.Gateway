@@ -1,8 +1,9 @@
-﻿using System;
+﻿using MyUniversity.Gateway.Services.Configs;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,30 +11,66 @@ namespace MyUniversity.Gateway.Services.MessageClient
 {
     public class MessageClient : IMessageClient
     {
-        ​public void Send()
+        private readonly IConnection connection;
+        private readonly IModel channel;
+
+        private readonly ILogger<MessageClient> _logger;
+        private readonly MessageClientConfigs _messageClientConfigs;
+
+        public MessageClient(ILogger<MessageClient> logger,
+            MessageClientConfigs messageClientConfigs)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost", };
+            _logger = logger;
+            _messageClientConfigs = messageClientConfigs;
 
-            using( var connection = factory.CreateConnection())
-            using(var channel = connection.CreateModel())
+            var factory = new ConnectionFactory()
             {
-                channel.QueueDeclare(queue: "hello",
-                                    durable: false,
-                                    exclusive: false,
-                                    autoDelete: false,
-                                    arguments: null);
+                HostName = _messageClientConfigs.HostName,
+                Port = _messageClientConfigs.Port,
+                UserName = _messageClientConfigs.UserName,
+                Password = _messageClientConfigs.Password
+            };
 
-                ​string message = "Hello World!";
-                var body = Encoding.UTF8.GetBytes(message);
+            connection = factory.CreateConnection();
+            channel = connection.CreateModel();
 
-                channel.BasicPublish(exchange: "",
-                                    routingKey: "hello",
-                                    basicProperties: null,
-                                    body: body);
+            _logger.LogInformation($"MessageClient registered by address {_messageClientConfigs.HostName}:{_messageClientConfigs.Port}");
+        }
 
+        public Task<TRespond> RequestAsync<TRequest, TRespond>(string requestQueue, TRequest requestObject)
+        {
+            var replyQueueName = channel.QueueDeclare().QueueName;
+            var consumer = new EventingBasicConsumer(channel);
 
+            var props = channel.CreateBasicProperties();
+            var correlationId = Guid.NewGuid().ToString();
+            props.CorrelationId = correlationId;
+            props.ReplyTo = replyQueueName;
 
-            }
+            string response = string.Empty;
+
+            consumer.Received += (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                if (ea.BasicProperties.CorrelationId == correlationId)
+                {
+                    response = Encoding.UTF8.GetString(body);
+                }
+            };
+
+            var messageBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestObject));
+            channel.BasicPublish(
+                exchange: "",
+                routingKey: requestQueue,
+                basicProperties: props,
+                body: messageBytes);
+
+            channel.BasicConsume(
+                consumer: consumer,
+                queue: replyQueueName,
+                autoAck: true);
+
+            return Task.FromResult(JsonConvert.DeserializeObject<TRespond>(response));
         }
     }
 }
