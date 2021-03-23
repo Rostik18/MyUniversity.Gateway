@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option csharp_namespace = "MyUniversity.Gateway";
+
+service User {
+  rpc RegisterUser (RegistrationRequest) returns (RegistrationReply);
+  rpc LoginUser (LoginRequest) returns (LoginReply);
+}
+
+message RegistrationRequest {
+  string emailAddress = 1;
+  string phoneNumber = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string password = 5;
+  string universityId = 6;
+  repeated string roles = 7;
+}
+
+message RegistrationReply {
+  bool registrationSuccess  = 1;
+}
+
+message LoginRequest {
+  string emailAddress = 1;
+  string password = 2;
+}
+
+message LoginReply {
+  string emailAddress  = 1;
+  string token = 2;
+}

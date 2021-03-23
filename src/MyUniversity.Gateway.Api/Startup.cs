@@ -23,6 +23,7 @@ namespace MyUniversity.Gateway.Api
         {
             services.AddCustomConfigurations(Configuration);
             services.AddCustomServices();
+            services.AddMapper();
             services.AddControllers();
 
             services.AddSwaggerGen(c =>

@@ -1,5 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using MyUniversity.Gateway.Api.MapperProfiles;
+using MyUniversity.Gateway.Services.Settings;
 
 namespace MyUniversity.Gateway.Api.Extensions
 {
@@ -7,13 +12,28 @@ namespace MyUniversity.Gateway.Api.Extensions
     {
         public static void AddCustomConfigurations(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddSingleton(configuration.GetSection(nameof(MessageClientConfigs)).Get<MessageClientConfigs>());
+            services.Configure<UserManagerSettings>(configuration.GetSection(nameof(UserManagerSettings)));
         }
 
         public static void AddCustomServices(this IServiceCollection services)
         {
-            //services.AddSingleton<IMessageClient, MessageClient>();
+            services.AddGrpcClient<User.UserClient>(o =>
+            {
+                var userManagerSettings = services.BuildServiceProvider().GetService<IOptions<UserManagerSettings>>().Value;
+                o.Address = new Uri($"{userManagerSettings.Host}:{userManagerSettings.Port}");
+            });
+        }
 
+        public static void AddMapper(this IServiceCollection services)
+        {
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new ControllerMapperProfile());
+                mc.AllowNullCollections = true;
+            });
+
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
         }
     }
 }
