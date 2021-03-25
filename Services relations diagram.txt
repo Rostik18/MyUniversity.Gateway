@@ -1,0 +1,29 @@
+@startuml
+Title Services relations diagram
+
+skinparam node {
+BackgroundColor white
+BorderColor cornFlowerBlue
+}
+
+skinparam sequence {
+ArrowColor cornflowerblue
+LifeLineBorderColor cornflowerblue
+ParticipantBorderColor CornflowerBlue
+ParticipantBackgroundColor white
+ParticipantFontName Helvetica
+ParticipantFontSize 14
+ParticipantFontColor black
+GroupBorderColor cornflowerBlue
+}
+
+rectangle MyUniversity {
+node Gateway
+node "User Manager" AS UM
+node "Resource Manager" AS RM
+}
+
+Gateway <-down-> UM
+Gateway <-down-> RM
+
+@enduml
