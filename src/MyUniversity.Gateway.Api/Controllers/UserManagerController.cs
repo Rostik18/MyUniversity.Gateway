@@ -27,7 +27,7 @@ namespace MyUniversity.Gateway.Api.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost]
+        [HttpPost("/registration")]
         public async Task<object> RegisterAsync([FromBody] RegisterUserModel registerUserModel)
         {
             _logger.LogInformation($"Start to process {ProcessFlows.UserRegistration} request");
@@ -47,6 +47,31 @@ namespace MyUniversity.Gateway.Api.Controllers
                 var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
 
                 _logger.LogWarning($"{ProcessFlows.UserRegistration} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
+
+                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
+            }
+        }
+
+        [HttpPost("/login")]
+        public async Task<object> LoginAsync([FromBody] LoginUserModel loginUserModel)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.UserLogin} request");
+
+            var requestModel = _mapper.Map<LoginRequest>(loginUserModel);
+
+            try
+            {
+                var response = await _userManagerClient.LoginUserAsync(requestModel, Metadata.Empty);
+
+                _logger.LogInformation($"{ProcessFlows.UserLogin} request was processed successfully");
+
+                return Ok(response);
+            }
+            catch (RpcException ex)
+            {
+                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
+
+                _logger.LogWarning($"{ProcessFlows.UserLogin} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
 
                 return Problem(ex.Status.Detail, statusCode: httpStatusCode);
             }

@@ -10,6 +10,8 @@ namespace MyUniversity.Gateway.Api.MapperProfiles
             CreateMap<RegisterUserModel, RegistrationRequest>()
                 .ForMember(x => x.Roles, x => x.MapFrom(xx => xx.Roles))
                 .ForMember(x => x.UniversityId, x => x.MapFrom(xx => xx.TenantId));
+
+            CreateMap<LoginUserModel, LoginRequest>();
         }
     }
 }
