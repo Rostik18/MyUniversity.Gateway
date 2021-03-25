@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MyUniversity.Gateway.Models.UserManager.University
+﻿namespace MyUniversity.Gateway.Models.UserManager.University
 {
     public class UniversityModel
     {

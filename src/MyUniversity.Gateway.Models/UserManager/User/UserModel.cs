@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyUniversity.Gateway.Models.UserManager.Role;
 using MyUniversity.Gateway.Models.UserManager.University;
 

@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MyUniversity.Gateway.Api.MapperProfiles;
-using MyUniversity.Gateway.Services.Settings;
 
 namespace MyUniversity.Gateway.Api.Extensions
 {
