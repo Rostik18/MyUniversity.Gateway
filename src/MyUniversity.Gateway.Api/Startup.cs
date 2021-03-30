@@ -1,11 +1,20 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MyUniversity.Gateway.Api.Constants;
 using MyUniversity.Gateway.Api.Extensions;
+using MyUniversity.Gateway.Api.Settings;
 
 namespace MyUniversity.Gateway.Api
 {
@@ -25,6 +34,38 @@ namespace MyUniversity.Gateway.Api
             services.AddCustomServices();
             services.AddMapper();
             services.AddControllers();
+
+            var jwtSettings = services.BuildServiceProvider().GetService<IOptions<JwtSettings>>().Value;
+
+            services
+                .AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        RequireExpirationTime = false,
+                        ValidateLifetime = true
+                    };
+                });
+
+            services
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy("RolePolicy", builder =>
+                    {
+                        builder.RequireRole(Roles.SuperAdmin, Roles.Service, Roles.UniversityAdmin, Roles.Teacher, Roles.Student);
+                    });
+                });
 
             services.AddSwaggerGen(c =>
             {
@@ -63,6 +104,10 @@ namespace MyUniversity.Gateway.Api
                         new List<string>()
                     }
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 

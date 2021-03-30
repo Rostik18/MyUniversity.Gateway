@@ -13,7 +13,8 @@ namespace MyUniversity.Gateway.Api
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureLogging((context, logging) => {
+                .ConfigureLogging((context, logging) =>
+                {
                     var config = context.Configuration.GetSection("Logging");
                     logging.AddConfiguration(config);
                     logging.AddConsole();

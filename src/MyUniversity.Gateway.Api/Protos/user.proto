@@ -14,7 +14,7 @@ message RegistrationRequest {
   string lastName = 4;
   string password = 5;
   string universityId = 6;
-  repeated string roles = 7;
+  repeated int32 roles = 7;
 }
 
 message RegistrationReply {

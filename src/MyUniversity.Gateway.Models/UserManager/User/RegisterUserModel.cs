@@ -23,8 +23,6 @@ namespace MyUniversity.Gateway.Models.UserManager.User
         [Phone]
         public string PhoneNumber { get; set; }
 
-        [Required]
-        [StringLength(maximumLength: 36, MinimumLength = 36, ErrorMessage = "User can not exist without university")]
         public string TenantId { get; set; }
 
         [Required]
@@ -33,6 +31,6 @@ namespace MyUniversity.Gateway.Models.UserManager.User
 
         [Required]
         [MinLength(1, ErrorMessage = "User should have at list one role")]
-        public IEnumerable<string> Roles { get; set; }
+        public IEnumerable<int> Roles { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace MyUniversity.Gateway.Api.Extensions
         public static void AddCustomConfigurations(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<UserManagerSettings>(configuration.GetSection(nameof(UserManagerSettings)));
+            services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
         }
 
         public static void AddCustomServices(this IServiceCollection services)
