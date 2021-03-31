@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using MyUniversity.Gateway.Api.Constants;
 using MyUniversity.Gateway.Api.Utils;
+using MyUniversity.Gateway.Models.UserManager.Role;
 using MyUniversity.Gateway.Models.UserManager.User;
 
 namespace MyUniversity.Gateway.Api.Controllers
@@ -18,17 +20,61 @@ namespace MyUniversity.Gateway.Api.Controllers
     public class UserManagerController : ControllerBase
     {
         private readonly ILogger<UserManagerController> _logger;
-        private readonly User.UserClient _userManagerClient;
+        private readonly User.UserClient _userClient;
+        private readonly Role.RoleClient _roleClient;
         private readonly IMapper _mapper;
 
         public UserManagerController(
             ILogger<UserManagerController> logger,
-            User.UserClient userManagerClient,
+            User.UserClient userClient,
+            Role.RoleClient roleClient,
             IMapper mapper)
         {
             _logger = logger;
-            _userManagerClient = userManagerClient;
+            _userClient = userClient;
             _mapper = mapper;
+            _roleClient = roleClient;
+        }
+
+        /// <summary>
+        /// Login into the system.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /api/login
+        ///     {
+        ///        "emailAddress": "Super.Admin@gmail.com",
+        ///        "password": "Admin"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="loginUserModel"></param>
+        /// <returns></returns>
+        [HttpPost("/api/login")]
+        [AllowAnonymous]
+        public async Task<object> LoginAsync([FromBody] LoginUserModel loginUserModel)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.UserLogin} request");
+
+            var requestModel = _mapper.Map<LoginRequest>(loginUserModel);
+
+            try
+            {
+                var response = await _userClient.LoginUserAsync(requestModel, Metadata.Empty);
+
+                _logger.LogInformation($"{ProcessFlows.UserLogin} request was processed successfully");
+
+                return Ok(response);
+            }
+            catch (RpcException ex)
+            {
+                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
+
+                _logger.LogWarning($"{ProcessFlows.UserLogin} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
+
+                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
+            }
         }
 
         /// <summary>
@@ -77,7 +123,7 @@ namespace MyUniversity.Gateway.Api.Controllers
 
             try
             {
-                var response = await _userManagerClient.RegisterUserAsync(
+                var response = await _userClient.RegisterUserAsync(
                     requestModel,
                     new Metadata
                     {
@@ -99,41 +145,37 @@ namespace MyUniversity.Gateway.Api.Controllers
         }
 
         /// <summary>
-        /// Login into the system.
+        /// Gives all available roles based on user access.
         /// </summary>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /api/login
-        ///     {
-        ///        "emailAddress": "Super.Admin@gmail.com",
-        ///        "password": "Admin"
-        ///     }
-        ///
-        /// </remarks>
-        /// <param name="loginUserModel"></param>
-        /// <returns></returns>
-        [HttpPost("/api/login")]
+        /// <returns>available roles</returns>
+        [HttpGet("/api/roles")]
         [AllowAnonymous]
-        public async Task<object> LoginAsync([FromBody] LoginUserModel loginUserModel)
+        public async Task<object> GetRolesAsync()
         {
-            _logger.LogInformation($"Start to process {ProcessFlows.UserLogin} request");
+            _logger.LogInformation($"Start to process {ProcessFlows.GetRoles} request");
 
-            var requestModel = _mapper.Map<LoginRequest>(loginUserModel);
+            var accessToken = Request.Headers[HeaderNames.Authorization];
 
             try
             {
-                var response = await _userManagerClient.LoginUserAsync(requestModel, Metadata.Empty);
+                var response = await _roleClient.GetRolesAsync(
+                    new RoleRequest(),
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
 
-                _logger.LogInformation($"{ProcessFlows.UserLogin} request was processed successfully");
+                var roles = response.Roles.Select(_mapper.Map<RoleModel>);
 
-                return Ok(response);
+                _logger.LogInformation($"{ProcessFlows.GetRoles} request was processed successfully");
+
+                return Ok(roles);
             }
             catch (RpcException ex)
             {
                 var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
 
-                _logger.LogWarning($"{ProcessFlows.UserLogin} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
+                _logger.LogWarning($"{ProcessFlows.GetRoles} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
 
                 return Problem(ex.Status.Detail, statusCode: httpStatusCode);
             }

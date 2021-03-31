@@ -4,6 +4,23 @@
         <name>MyUniversity.Gateway.Api</name>
     </assembly>
     <members>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.LoginAsync(MyUniversity.Gateway.Models.UserManager.User.LoginUserModel)">
+             <summary>
+             Login into the system.
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /api/login
+                 {
+                    "emailAddress": "Super.Admin@gmail.com",
+                    "password": "Admin"
+                 }
+            
+             </remarks>
+             <param name="loginUserModel"></param>
+             <returns></returns>
+        </member>
         <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.RegisterAsync(MyUniversity.Gateway.Models.UserManager.User.RegisterUserModel)">
              <summary>
              Create a new user.
@@ -41,28 +58,17 @@
              <param name="registerUserModel">New user model</param>
              <returns>Registration success</returns>
         </member>
-        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.LoginAsync(MyUniversity.Gateway.Models.UserManager.User.LoginUserModel)">
-             <summary>
-             Login into the system.
-             </summary>
-             <remarks>
-             Sample request:
-            
-                 POST /api/login
-                 {
-                    "emailAddress": "Super.Admin@gmail.com",
-                    "password": "Admin"
-                 }
-            
-             </remarks>
-             <param name="loginUserModel"></param>
-             <returns></returns>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetRolesAsync">
+            <summary>
+            Gives all available roles based on user access.
+            </summary>
+            <returns>available roles</returns>
         </member>
         <member name="T:MyUniversity.Gateway.UserReflection">
-            <summary>Holder for reflection information generated from Protos/user.proto</summary>
+            <summary>Holder for reflection information generated from Protos/UserManager/user.proto</summary>
         </member>
         <member name="P:MyUniversity.Gateway.UserReflection.Descriptor">
-            <summary>File descriptor for Protos/user.proto</summary>
+            <summary>File descriptor for Protos/UserManager/user.proto</summary>
         </member>
         <member name="F:MyUniversity.Gateway.RegistrationRequest.EmailAddressFieldNumber">
             <summary>Field number for the "emailAddress" field.</summary>
@@ -122,6 +128,45 @@
             <param name="configuration">The client configuration.</param>
         </member>
         <member name="M:MyUniversity.Gateway.User.UserClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+        <member name="T:MyUniversity.Gateway.RoleReflection">
+            <summary>Holder for reflection information generated from Protos/UserManager/role.proto</summary>
+        </member>
+        <member name="P:MyUniversity.Gateway.RoleReflection.Descriptor">
+            <summary>File descriptor for Protos/UserManager/role.proto</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.RolesReply.RolesFieldNumber">
+            <summary>Field number for the "Roles" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.RoleReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.RoleReply.RoleFieldNumber">
+            <summary>Field number for the "role" field.</summary>
+        </member>
+        <member name="P:MyUniversity.Gateway.Role.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:MyUniversity.Gateway.Role.RoleClient">
+            <summary>Client for Role</summary>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.RoleClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for Role</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.RoleClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for Role that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.RoleClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.RoleClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.RoleClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
             <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
         </member>
     </members>

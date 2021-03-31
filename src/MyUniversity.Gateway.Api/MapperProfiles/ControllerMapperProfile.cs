@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MyUniversity.Gateway.Models.UserManager.Role;
 using MyUniversity.Gateway.Models.UserManager.User;
 
 namespace MyUniversity.Gateway.Api.MapperProfiles
@@ -12,6 +13,7 @@ namespace MyUniversity.Gateway.Api.MapperProfiles
                 .ForMember(x => x.UniversityId, x => x.MapFrom(xx => string.IsNullOrWhiteSpace(xx.TenantId) ? string.Empty : xx.TenantId));
 
             CreateMap<LoginUserModel, LoginRequest>();
+            CreateMap<RoleReply, RoleModel>();
         }
     }
 }

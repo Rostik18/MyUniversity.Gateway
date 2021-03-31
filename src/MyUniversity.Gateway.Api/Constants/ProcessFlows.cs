@@ -4,5 +4,6 @@
     {
         public const string UserRegistration = "User registration";
         public const string UserLogin = "User login";
+        public const string GetRoles = "Get roles";
     }
 }

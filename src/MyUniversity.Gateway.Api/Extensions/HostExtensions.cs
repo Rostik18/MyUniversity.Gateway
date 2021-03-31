@@ -18,9 +18,14 @@ namespace MyUniversity.Gateway.Api.Extensions
 
         public static void AddCustomServices(this IServiceCollection services)
         {
+            var userManagerSettings = services.BuildServiceProvider().GetService<IOptions<UserManagerSettings>>().Value;
+
             services.AddGrpcClient<User.UserClient>(o =>
             {
-                var userManagerSettings = services.BuildServiceProvider().GetService<IOptions<UserManagerSettings>>().Value;
+                o.Address = new Uri($"{userManagerSettings.Host}:{userManagerSettings.Port}");
+            });
+            services.AddGrpcClient<Role.RoleClient>(o =>
+            {
                 o.Address = new Uri($"{userManagerSettings.Host}:{userManagerSettings.Port}");
             });
         }
