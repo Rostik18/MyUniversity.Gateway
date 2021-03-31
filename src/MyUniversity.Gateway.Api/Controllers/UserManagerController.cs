@@ -44,6 +44,8 @@ namespace MyUniversity.Gateway.Api.Controllers
         /// UniversityAdmin -> UniversityAdmin, Teacher, Student.
         /// 
         /// Teacher -> Student.
+        ///
+        /// TenantId is optional for SuperAdmin and Service accounts.
         /// 
         /// Sample request:
         /// 
