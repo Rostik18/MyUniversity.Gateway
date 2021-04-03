@@ -64,6 +64,28 @@
             </summary>
             <returns>available roles</returns>
         </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetAllUsersAsync">
+             <summary>
+             Gives all available users based on user access.
+             </summary>
+             <remarks>
+             Only logged-in users can get users.
+             
+             SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             UniversityAdmin -> own university: UniversityAdmin, Teacher, Student.
+             
+             Teacher -> own university: Teacher, Student.
+            
+             Sample request:
+             
+                 GET /api/users
+             
+             </remarks>
+             <returns>all available users</returns>
+        </member>
         <member name="T:MyUniversity.Gateway.UserReflection">
             <summary>Holder for reflection information generated from Protos/UserManager/user.proto</summary>
         </member>
@@ -105,6 +127,54 @@
         </member>
         <member name="F:MyUniversity.Gateway.LoginReply.TokenFieldNumber">
             <summary>Field number for the "token" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.GetUserRequest.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.GetAllUsersReply.UsersFieldNumber">
+            <summary>Field number for the "users" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UserModelReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UserModelReply.FirstNameFieldNumber">
+            <summary>Field number for the "firstName" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UserModelReply.LastNameFieldNumber">
+            <summary>Field number for the "lastName" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UserModelReply.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UserModelReply.PhoneNumberFieldNumber">
+            <summary>Field number for the "phoneNumber" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UserModelReply.UniversityFieldNumber">
+            <summary>Field number for the "university" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UserModelReply.RolesFieldNumber">
+            <summary>Field number for the "roles" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UniversityModelReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UniversityModelReply.NameFieldNumber">
+            <summary>Field number for the "name" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UniversityModelReply.AddressFieldNumber">
+            <summary>Field number for the "address" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UniversityModelReply.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.UniversityModelReply.PhoneNumberFieldNumber">
+            <summary>Field number for the "phoneNumber" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.RoleModelReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.RoleModelReply.RoleFieldNumber">
+            <summary>Field number for the "role" field.</summary>
         </member>
         <member name="P:MyUniversity.Gateway.User.Descriptor">
             <summary>Service descriptor</summary>

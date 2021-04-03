@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using MyUniversity.Gateway.Api.Constants;
 using MyUniversity.Gateway.Api.Utils;
+using MyUniversity.Gateway.Models.User;
 using MyUniversity.Gateway.Models.UserManager.Role;
 using MyUniversity.Gateway.Models.UserManager.User;
 
@@ -176,6 +177,59 @@ namespace MyUniversity.Gateway.Api.Controllers
                 var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
 
                 _logger.LogWarning($"{ProcessFlows.GetRoles} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
+
+                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
+            }
+        }
+
+        /// <summary>
+        /// Gives all available users based on user access.
+        /// </summary>
+        /// <remarks>
+        /// Only logged-in users can get users.
+        /// 
+        /// SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// UniversityAdmin -> own university: UniversityAdmin, Teacher, Student.
+        /// 
+        /// Teacher -> own university: Teacher, Student.
+        ///
+        /// Sample request:
+        /// 
+        ///     GET /api/users
+        /// 
+        /// </remarks>
+        /// <returns>all available users</returns>
+        [HttpGet("/api/users")]
+        [Authorize(Roles = "SuperAdmin,UniversityAdmin,Teacher")]
+        public async Task<object> GetAllUsersAsync()
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.GetAllUsers} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var response = await _userClient.GetAllUsersAsync(
+                    new GetUsersRequest(),
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                var users = response.Users.Select(_mapper.Map<UserModel>);
+
+                _logger.LogInformation($"{ProcessFlows.GetAllUsers} request was processed successfully");
+
+                return Ok(users);
+            }
+            catch (RpcException ex)
+            {
+                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
+
+                _logger.LogWarning($"{ProcessFlows.GetAllUsers} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
 
                 return Problem(ex.Status.Detail, statusCode: httpStatusCode);
             }

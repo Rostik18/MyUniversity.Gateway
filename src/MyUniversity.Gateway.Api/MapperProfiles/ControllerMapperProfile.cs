@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using MyUniversity.Gateway.Models.User;
 using MyUniversity.Gateway.Models.UserManager.Role;
+using MyUniversity.Gateway.Models.UserManager.University;
 using MyUniversity.Gateway.Models.UserManager.User;
 
 namespace MyUniversity.Gateway.Api.MapperProfiles
@@ -14,6 +16,12 @@ namespace MyUniversity.Gateway.Api.MapperProfiles
 
             CreateMap<LoginUserModel, LoginRequest>();
             CreateMap<RoleReply, RoleModel>();
+            CreateMap<UserModelReply, UserModel>()
+                .ForMember(x => x.UserRoles, x => x.MapFrom(xx => xx.Roles))
+                .ForMember(x => x.University, x => x.MapFrom(xx => xx.University));
+
+            CreateMap<RoleModelReply, RoleModel>();
+            CreateMap<UniversityModelReply, UniversityModel>();
         }
     }
 }

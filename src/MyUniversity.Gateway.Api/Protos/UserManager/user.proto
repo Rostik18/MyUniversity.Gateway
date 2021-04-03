@@ -3,30 +3,64 @@ syntax = "proto3";
 option csharp_namespace = "MyUniversity.Gateway";
 
 service User {
-  rpc RegisterUser (RegistrationRequest) returns (RegistrationReply);
-  rpc LoginUser (LoginRequest) returns (LoginReply);
+	rpc RegisterUser (RegistrationRequest) returns (RegistrationReply);
+	rpc LoginUser (LoginRequest) returns (LoginReply);
+	rpc GetAllUsers (GetUsersRequest) returns (GetAllUsersReply);
+	rpc GetUserById (GetUserRequest) returns (UserModelReply);
 }
 
 message RegistrationRequest {
-  string emailAddress = 1;
-  string phoneNumber = 2;
-  string firstName = 3;
-  string lastName = 4;
-  string password = 5;
-  string universityId = 6;
-  repeated int32 roles = 7;
+	string emailAddress = 1;
+	string phoneNumber = 2;
+	string firstName = 3;
+	string lastName = 4;
+	string password = 5;
+	string universityId = 6;
+	repeated int32 roles = 7;
 }
 
 message RegistrationReply {
-  bool registrationSuccess  = 1;
+	bool registrationSuccess  = 1;
 }
 
 message LoginRequest {
-  string emailAddress = 1;
-  string password = 2;
+	string emailAddress = 1;
+	string password = 2;
 }
 
 message LoginReply {
-  string emailAddress  = 1;
-  string token = 2;
+	string emailAddress  = 1;
+	string token = 2;
+}
+
+message GetUsersRequest {}
+message GetUserRequest {
+	string id = 1;
+}
+
+message GetAllUsersReply {
+	repeated UserModelReply users = 1;
+}
+
+message UserModelReply {
+	string id = 1;
+	string firstName = 2;
+	string lastName = 3;
+	string emailAddress = 4;
+	string phoneNumber = 5;
+	UniversityModelReply university = 6;
+	repeated RoleModelReply roles = 8;
+}
+
+message UniversityModelReply {
+	string id = 1;
+	string name = 2;
+	string address = 3;
+	string emailAddress = 4;
+	string phoneNumber = 5;
+}
+
+message RoleModelReply {
+	string id = 1;
+	string role = 2;
 }
