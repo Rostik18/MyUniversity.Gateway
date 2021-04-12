@@ -3,6 +3,8 @@ using MyUniversity.Gateway.Models.User;
 using MyUniversity.Gateway.Models.UserManager.Role;
 using MyUniversity.Gateway.Models.UserManager.University;
 using MyUniversity.Gateway.Models.UserManager.User;
+using MyUniversity.Gateway.Role;
+using MyUniversity.Gateway.User;
 
 namespace MyUniversity.Gateway.Api.MapperProfiles
 {

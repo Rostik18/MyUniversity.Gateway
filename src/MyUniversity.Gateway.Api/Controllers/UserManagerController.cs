@@ -13,6 +13,8 @@ using MyUniversity.Gateway.Api.Utils;
 using MyUniversity.Gateway.Models.User;
 using MyUniversity.Gateway.Models.UserManager.Role;
 using MyUniversity.Gateway.Models.UserManager.User;
+using MyUniversity.Gateway.Role;
+using MyUniversity.Gateway.User;
 
 namespace MyUniversity.Gateway.Api.Controllers
 {
@@ -22,14 +24,14 @@ namespace MyUniversity.Gateway.Api.Controllers
     public class UserManagerController : ControllerBase
     {
         private readonly ILogger<UserManagerController> _logger;
-        private readonly User.UserClient _userClient;
-        private readonly Role.RoleClient _roleClient;
+        private readonly User.User.UserClient _userClient;
+        private readonly Role.Role.RoleClient _roleClient;
         private readonly IMapper _mapper;
 
         public UserManagerController(
             ILogger<UserManagerController> logger,
-            User.UserClient userClient,
-            Role.RoleClient roleClient,
+            User.User.UserClient userClient,
+            Role.Role.RoleClient roleClient,
             IMapper mapper)
         {
             _logger = logger;

@@ -1,0 +1,51 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "MyUniversity.Gateway.University";
+
+service University {
+	rpc CreateUniversity (CreateUniversityRequest) returns (UniversityModelReply);
+	rpc GetUniversities (GetUniversitiesRequest) returns (GetUniversitiesReply);
+	rpc GetUniversityById (GetUniversityByIdRequest) returns (UniversityModelReply);
+	rpc UpdateUniversity (UpdateUniversityRequest) returns (UniversityModelReply);
+	rpc DeleteUniversity (DeleteUniversityRequest) returns (DeleteUniversityReply);
+}
+
+message CreateUniversityRequest {
+	string name = 1;
+	string address = 2;
+	string emailAddress = 3;
+	string phoneNumber = 4;
+}
+
+message GetUniversitiesRequest {}
+message GetUniversityByIdRequest {
+	string id = 1;
+}
+
+message GetUniversitiesReply {
+	repeated UniversityModelReply Universities = 1;
+}
+
+message UpdateUniversityRequest {
+	string id = 1;
+	string name = 2;
+	string address = 3;
+	string emailAddress = 4;
+	string phoneNumber = 5;
+}
+
+message UniversityModelReply {
+	string id = 1;
+	string name = 2;
+	string address = 3;
+	string emailAddress = 4;
+	string phoneNumber = 5;
+}
+
+message DeleteUniversityRequest {
+	string id = 1;
+}
+
+message DeleteUniversityReply {
+	bool success = 1;
+}

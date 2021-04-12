@@ -20,11 +20,11 @@ namespace MyUniversity.Gateway.Api.Extensions
         {
             var userManagerSettings = services.BuildServiceProvider().GetService<IOptions<UserManagerSettings>>().Value;
 
-            services.AddGrpcClient<User.UserClient>(o =>
+            services.AddGrpcClient<User.User.UserClient>(o =>
             {
                 o.Address = new Uri($"{userManagerSettings.Host}:{userManagerSettings.Port}");
             });
-            services.AddGrpcClient<Role.RoleClient>(o =>
+            services.AddGrpcClient<Role.Role.RoleClient>(o =>
             {
                 o.Address = new Uri($"{userManagerSettings.Host}:{userManagerSettings.Port}");
             });

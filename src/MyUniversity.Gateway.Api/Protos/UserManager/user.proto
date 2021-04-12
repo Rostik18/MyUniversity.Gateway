@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "MyUniversity.Gateway";
+option csharp_namespace = "MyUniversity.Gateway.User";
 
 service User {
 	rpc RegisterUser (RegistrationRequest) returns (RegistrationReply);
@@ -43,13 +43,13 @@ message GetAllUsersReply {
 }
 
 message UserModelReply {
-	string id = 1;
+	int32 id = 1;
 	string firstName = 2;
 	string lastName = 3;
 	string emailAddress = 4;
 	string phoneNumber = 5;
 	UniversityModelReply university = 6;
-	repeated RoleModelReply roles = 8;
+	repeated RoleModelReply roles = 7;
 }
 
 message UniversityModelReply {
@@ -61,6 +61,6 @@ message UniversityModelReply {
 }
 
 message RoleModelReply {
-	string id = 1;
+	int32 id = 1;
 	string role = 2;
 }

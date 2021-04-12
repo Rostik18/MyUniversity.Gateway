@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "MyUniversity.Gateway";
+option csharp_namespace = "MyUniversity.Gateway.Role";
 
 service Role {
 	rpc GetRoles (RoleRequest) returns (RolesReply);

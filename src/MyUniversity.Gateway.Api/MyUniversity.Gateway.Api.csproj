@@ -37,6 +37,7 @@
   <ItemGroup>
     <Protobuf Include="Protos\UserManager\user.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\UserManager\role.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\UserManager\university.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
