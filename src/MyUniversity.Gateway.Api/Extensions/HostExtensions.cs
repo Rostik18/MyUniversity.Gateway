@@ -28,6 +28,10 @@ namespace MyUniversity.Gateway.Api.Extensions
             {
                 o.Address = new Uri($"{userManagerSettings.Host}:{userManagerSettings.Port}");
             });
+            services.AddGrpcClient<University.University.UniversityClient>(o =>
+            {
+                o.Address = new Uri($"{userManagerSettings.Host}:{userManagerSettings.Port}");
+            });
         }
 
         public static void AddMapper(this IServiceCollection services)

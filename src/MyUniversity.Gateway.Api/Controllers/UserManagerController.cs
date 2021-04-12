@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -12,8 +13,10 @@ using MyUniversity.Gateway.Api.Constants;
 using MyUniversity.Gateway.Api.Utils;
 using MyUniversity.Gateway.Models.User;
 using MyUniversity.Gateway.Models.UserManager.Role;
+using MyUniversity.Gateway.Models.UserManager.University;
 using MyUniversity.Gateway.Models.UserManager.User;
 using MyUniversity.Gateway.Role;
+using MyUniversity.Gateway.University;
 using MyUniversity.Gateway.User;
 
 namespace MyUniversity.Gateway.Api.Controllers
@@ -26,19 +29,24 @@ namespace MyUniversity.Gateway.Api.Controllers
         private readonly ILogger<UserManagerController> _logger;
         private readonly User.User.UserClient _userClient;
         private readonly Role.Role.RoleClient _roleClient;
+        private readonly University.University.UniversityClient _universityClient;
         private readonly IMapper _mapper;
 
         public UserManagerController(
             ILogger<UserManagerController> logger,
             User.User.UserClient userClient,
             Role.Role.RoleClient roleClient,
+            University.University.UniversityClient universityClient,
             IMapper mapper)
         {
             _logger = logger;
             _userClient = userClient;
             _mapper = mapper;
             _roleClient = roleClient;
+            _universityClient = universityClient;
         }
+
+        #region User
 
         /// <summary>
         /// Login into the system.
@@ -73,11 +81,7 @@ namespace MyUniversity.Gateway.Api.Controllers
             }
             catch (RpcException ex)
             {
-                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
-
-                _logger.LogWarning($"{ProcessFlows.UserLogin} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
-
-                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
+                return HandleError(ex, ProcessFlows.UserLogin);
             }
         }
 
@@ -140,48 +144,7 @@ namespace MyUniversity.Gateway.Api.Controllers
             }
             catch (RpcException ex)
             {
-                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
-
-                _logger.LogWarning($"{ProcessFlows.UserRegistration} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
-
-                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
-            }
-        }
-
-        /// <summary>
-        /// Gives all available roles based on user access.
-        /// </summary>
-        /// <returns>available roles</returns>
-        [HttpGet("/api/roles")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetRolesAsync()
-        {
-            _logger.LogInformation($"Start to process {ProcessFlows.GetRoles} request");
-
-            var accessToken = Request.Headers[HeaderNames.Authorization];
-
-            try
-            {
-                var response = await _roleClient.GetRolesAsync(
-                    new RoleRequest(),
-                    new Metadata
-                    {
-                        {HeaderKeys.AccessToken, accessToken.ToString()}
-                    });
-
-                var roles = response.Roles.Select(_mapper.Map<RoleModel>);
-
-                _logger.LogInformation($"{ProcessFlows.GetRoles} request was processed successfully");
-
-                return Ok(roles);
-            }
-            catch (RpcException ex)
-            {
-                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
-
-                _logger.LogWarning($"{ProcessFlows.GetRoles} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
-
-                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
+                return HandleError(ex, ProcessFlows.UserRegistration);
             }
         }
 
@@ -230,11 +193,7 @@ namespace MyUniversity.Gateway.Api.Controllers
             }
             catch (RpcException ex)
             {
-                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
-
-                _logger.LogWarning($"{ProcessFlows.GetAllUsers} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
-
-                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
+                return HandleError(ex, ProcessFlows.GetAllUsers);
             }
         }
 
@@ -283,12 +242,209 @@ namespace MyUniversity.Gateway.Api.Controllers
             }
             catch (RpcException ex)
             {
-                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
-
-                _logger.LogWarning($"{ProcessFlows.GetUserById} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
-
-                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
+                return HandleError(ex, ProcessFlows.GetUserById);
             }
+        }
+
+        #endregion
+
+        #region Role
+
+        /// <summary>
+        /// Gives all available roles based on user access.
+        /// </summary>
+        /// <returns>available roles</returns>
+        [HttpGet("/api/roles")]
+        [Authorize(Roles = "SuperAdmin,UniversityAdmin,Teacher")]
+        public async Task<IActionResult> GetRolesAsync()
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.GetRoles} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var response = await _roleClient.GetRolesAsync(
+                    new RoleRequest(),
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                var roles = response.Roles.Select(_mapper.Map<RoleModel>);
+
+                _logger.LogInformation($"{ProcessFlows.GetRoles} request was processed successfully");
+
+                return Ok(roles);
+            }
+            catch (RpcException ex)
+            {
+                return HandleError(ex, ProcessFlows.GetRoles);
+            }
+        }
+
+        #endregion
+
+        #region University
+
+        /// <summary>
+        /// Create new university.
+        /// </summary>
+        /// <remarks>
+        /// Only for SuperAdmin
+        /// </remarks>
+        /// <returns>created university</returns>
+        [HttpPost("/api/universities")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> CreateUniversityAsync([FromBody] CreateUniversityModel model)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.CreateUniversity} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var requestModel = _mapper.Map<CreateUniversityRequest>(model);
+
+                var response = await _universityClient.CreateUniversityAsync(
+                    requestModel,
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                var createdModel = _mapper.Map<UniversityModel>(response);
+
+                _logger.LogInformation($"{ProcessFlows.CreateUniversity} request was processed successfully");
+
+                return Ok(createdModel);
+            }
+            catch (RpcException ex)
+            {
+                return HandleError(ex, ProcessFlows.CreateUniversity);
+            }
+        }
+
+        /// <summary>
+        /// Gives all available universities based on user access.
+        /// </summary>
+        /// <remarks>
+        /// SuperAdmin see all universities
+        /// 
+        /// UniversityAdmin, Teacher and Student its own
+        /// </remarks>
+        /// <returns>available universities</returns>
+        [HttpGet("/api/universities")]
+        [Authorize(Roles = "SuperAdmin,UniversityAdmin,Teacher,Student")]
+        public async Task<IActionResult> GetUniversitiesAsync()
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.GetAllUniversities} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var response = await _universityClient.GetUniversitiesAsync(
+                    new GetUniversitiesRequest(),
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                var universities = response.Universities.Select(_mapper.Map<UniversityModel>);
+
+                _logger.LogInformation($"{ProcessFlows.GetAllUniversities} request was processed successfully");
+
+                return Ok(universities);
+            }
+            catch (RpcException ex)
+            {
+                return HandleError(ex, ProcessFlows.GetAllUniversities);
+            }
+        }
+
+        /// <summary>
+        /// Update university.
+        /// </summary>
+        /// <remarks>
+        /// Only for SuperAdmin
+        /// </remarks>
+        /// <returns>created university</returns>
+        [HttpPut("/api/universities/{id}")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> UpdateUniversityAsync(string id, [FromBody] UpdateUniversityModel model)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.UpdateUniversity} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var requestModel = _mapper.Map<UpdateUniversityRequest>(model);
+                requestModel.Id = id;
+
+                var response = await _universityClient.UpdateUniversityAsync(
+                    requestModel,
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                var updatedModel = _mapper.Map<UniversityModel>(response);
+
+                _logger.LogInformation($"{ProcessFlows.UpdateUniversity} request was processed successfully");
+
+                return Ok(updatedModel);
+            }
+            catch (RpcException ex)
+            {
+                return HandleError(ex, ProcessFlows.UpdateUniversity);
+            }
+        }
+
+        /// <summary>
+        /// Delete university.
+        /// </summary>
+        /// <remarks>
+        /// Only for SuperAdmin
+        /// </remarks>
+        /// <returns>created university</returns>
+        [HttpDelete("/api/universities/{id}")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> DeleteUniversityAsync([NotNull] string id)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.DeleteUniversity} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var response = await _universityClient.DeleteUniversityAsync(
+                    new DeleteUniversityRequest { Id = id },
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                _logger.LogInformation($"{ProcessFlows.DeleteUniversity} request was processed successfully");
+
+                return Ok(response);
+            }
+            catch (RpcException ex)
+            {
+                return HandleError(ex, ProcessFlows.DeleteUniversity);
+            }
+        }
+
+        #endregion
+
+        private ObjectResult HandleError(RpcException ex, string processFlow)
+        {
+            var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
+
+            _logger.LogWarning($"{processFlow} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
+
+            return Problem(ex.Status.Detail, statusCode: httpStatusCode);
         }
     }
 }

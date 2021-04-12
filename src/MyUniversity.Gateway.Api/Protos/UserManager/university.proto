@@ -5,7 +5,6 @@ option csharp_namespace = "MyUniversity.Gateway.University";
 service University {
 	rpc CreateUniversity (CreateUniversityRequest) returns (UniversityModelReply);
 	rpc GetUniversities (GetUniversitiesRequest) returns (GetUniversitiesReply);
-	rpc GetUniversityById (GetUniversityByIdRequest) returns (UniversityModelReply);
 	rpc UpdateUniversity (UpdateUniversityRequest) returns (UniversityModelReply);
 	rpc DeleteUniversity (DeleteUniversityRequest) returns (DeleteUniversityReply);
 }
@@ -18,9 +17,6 @@ message CreateUniversityRequest {
 }
 
 message GetUniversitiesRequest {}
-message GetUniversityByIdRequest {
-	string id = 1;
-}
 
 message GetUniversitiesReply {
 	repeated UniversityModelReply Universities = 1;

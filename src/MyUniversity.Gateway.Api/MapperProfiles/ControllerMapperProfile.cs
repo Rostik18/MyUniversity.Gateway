@@ -4,6 +4,7 @@ using MyUniversity.Gateway.Models.UserManager.Role;
 using MyUniversity.Gateway.Models.UserManager.University;
 using MyUniversity.Gateway.Models.UserManager.User;
 using MyUniversity.Gateway.Role;
+using MyUniversity.Gateway.University;
 using MyUniversity.Gateway.User;
 
 namespace MyUniversity.Gateway.Api.MapperProfiles
@@ -23,7 +24,15 @@ namespace MyUniversity.Gateway.Api.MapperProfiles
                 .ForMember(x => x.University, x => x.MapFrom(xx => xx.University));
 
             CreateMap<RoleModelReply, RoleModel>();
-            CreateMap<UniversityModelReply, UniversityModel>();
+            CreateMap<User.UniversityModelReply, UniversityModel>();
+
+            CreateMap<CreateUniversityModel, CreateUniversityRequest>();
+            CreateMap<UpdateUniversityModel, UpdateUniversityRequest>()
+                .ForMember(x => x.Name, x => x.MapFrom(xx => xx.Name ?? string.Empty))
+                .ForMember(x => x.Address, x => x.MapFrom(xx => xx.Address ?? string.Empty))
+                .ForMember(x => x.EmailAddress, x => x.MapFrom(xx => xx.EmailAddress ?? string.Empty))
+                .ForMember(x => x.PhoneNumber, x => x.MapFrom(xx => xx.PhoneNumber ?? string.Empty));
+            CreateMap<University.UniversityModelReply, UniversityModel>();
         }
     }
 }

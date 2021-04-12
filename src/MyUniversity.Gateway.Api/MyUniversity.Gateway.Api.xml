@@ -58,12 +58,6 @@
              <param name="registerUserModel">New user model</param>
              <returns>Registration success</returns>
         </member>
-        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetRolesAsync">
-            <summary>
-            Gives all available roles based on user access.
-            </summary>
-            <returns>available roles</returns>
-        </member>
         <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetAllUsersAsync">
              <summary>
              Gives all available users based on user access.
@@ -107,6 +101,49 @@
              
              </remarks>
              <returns>Available user by id</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetRolesAsync">
+            <summary>
+            Gives all available roles based on user access.
+            </summary>
+            <returns>available roles</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.CreateUniversityAsync(MyUniversity.Gateway.Models.UserManager.University.CreateUniversityModel)">
+            <summary>
+            Create new university.
+            </summary>
+            <remarks>
+            Only for SuperAdmin
+            </remarks>
+            <returns>created university</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetUniversitiesAsync">
+            <summary>
+            Gives all available universities based on user access.
+            </summary>
+            <remarks>
+            SuperAdmin see all universities
+            UniversityAdmin, Teacher and Student its own
+            </remarks>
+            <returns>available universities</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.UpdateUniversityAsync(System.String,MyUniversity.Gateway.Models.UserManager.University.UpdateUniversityModel)">
+            <summary>
+            Update university.
+            </summary>
+            <remarks>
+            Only for SuperAdmin
+            </remarks>
+            <returns>created university</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.DeleteUniversityAsync(System.String)">
+            <summary>
+            Delete university.
+            </summary>
+            <remarks>
+            Only for SuperAdmin
+            </remarks>
+            <returns>created university</returns>
         </member>
         <member name="T:MyUniversity.Gateway.User.UserReflection">
             <summary>Holder for reflection information generated from Protos/UserManager/user.proto</summary>
@@ -278,9 +315,6 @@
         </member>
         <member name="F:MyUniversity.Gateway.University.CreateUniversityRequest.PhoneNumberFieldNumber">
             <summary>Field number for the "phoneNumber" field.</summary>
-        </member>
-        <member name="F:MyUniversity.Gateway.University.GetUniversityByIdRequest.IdFieldNumber">
-            <summary>Field number for the "id" field.</summary>
         </member>
         <member name="F:MyUniversity.Gateway.University.GetUniversitiesReply.UniversitiesFieldNumber">
             <summary>Field number for the "Universities" field.</summary>
