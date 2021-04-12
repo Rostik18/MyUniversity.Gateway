@@ -86,6 +86,28 @@
              </remarks>
              <returns>all available users</returns>
         </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetUserByIdAsync(System.Int32)">
+             <summary>
+             Gives user by id based on user access.
+             </summary>
+             <remarks>
+             Only logged-in users can get user.
+             
+             SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             UniversityAdmin -> own university: UniversityAdmin, Teacher, Student.
+             
+             Teacher -> own university: Teacher, Student.
+            
+             Sample request:
+             
+                 GET /api/user/1
+             
+             </remarks>
+             <returns>Available user by id</returns>
+        </member>
         <member name="T:MyUniversity.Gateway.UserReflection">
             <summary>Holder for reflection information generated from Protos/UserManager/user.proto</summary>
         </member>

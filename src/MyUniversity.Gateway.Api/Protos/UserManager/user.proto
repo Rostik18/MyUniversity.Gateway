@@ -35,7 +35,7 @@ message LoginReply {
 
 message GetUsersRequest {}
 message GetUserRequest {
-	string id = 1;
+	int32 id = 1;
 }
 
 message GetAllUsersReply {

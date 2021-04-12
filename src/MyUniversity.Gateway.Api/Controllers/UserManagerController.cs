@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Grpc.Core;
@@ -54,7 +55,7 @@ namespace MyUniversity.Gateway.Api.Controllers
         /// <returns></returns>
         [HttpPost("/api/login")]
         [AllowAnonymous]
-        public async Task<object> LoginAsync([FromBody] LoginUserModel loginUserModel)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginUserModel loginUserModel)
         {
             _logger.LogInformation($"Start to process {ProcessFlows.UserLogin} request");
 
@@ -115,7 +116,7 @@ namespace MyUniversity.Gateway.Api.Controllers
         /// <returns>Registration success</returns>
         [HttpPost("/api/registration")]
         [Authorize(Roles = "SuperAdmin,UniversityAdmin,Teacher")]
-        public async Task<object> RegisterAsync([FromBody] RegisterUserModel registerUserModel)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserModel registerUserModel)
         {
             _logger.LogInformation($"Start to process {ProcessFlows.UserRegistration} request");
 
@@ -151,7 +152,7 @@ namespace MyUniversity.Gateway.Api.Controllers
         /// <returns>available roles</returns>
         [HttpGet("/api/roles")]
         [AllowAnonymous]
-        public async Task<object> GetRolesAsync()
+        public async Task<IActionResult> GetRolesAsync()
         {
             _logger.LogInformation($"Start to process {ProcessFlows.GetRoles} request");
 
@@ -204,7 +205,7 @@ namespace MyUniversity.Gateway.Api.Controllers
         /// <returns>all available users</returns>
         [HttpGet("/api/users")]
         [Authorize(Roles = "SuperAdmin,UniversityAdmin,Teacher")]
-        public async Task<object> GetAllUsersAsync()
+        public async Task<IActionResult> GetAllUsersAsync()
         {
             _logger.LogInformation($"Start to process {ProcessFlows.GetAllUsers} request");
 
@@ -230,6 +231,59 @@ namespace MyUniversity.Gateway.Api.Controllers
                 var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
 
                 _logger.LogWarning($"{ProcessFlows.GetAllUsers} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
+
+                return Problem(ex.Status.Detail, statusCode: httpStatusCode);
+            }
+        }
+
+        /// <summary>
+        /// Gives user by id based on user access.
+        /// </summary>
+        /// <remarks>
+        /// Only logged-in users can get user.
+        /// 
+        /// SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// UniversityAdmin -> own university: UniversityAdmin, Teacher, Student.
+        /// 
+        /// Teacher -> own university: Teacher, Student.
+        ///
+        /// Sample request:
+        /// 
+        ///     GET /api/user/1
+        /// 
+        /// </remarks>
+        /// <returns>Available user by id</returns>
+        [HttpGet("/api/users/{id}")]
+        [Authorize(Roles = "SuperAdmin,UniversityAdmin,Teacher")]
+        public async Task<IActionResult> GetUserByIdAsync([Range(1, int.MaxValue)] int id)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.GetUserById} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var response = await _userClient.GetUserByIdAsync(
+                    new GetUserRequest { Id = id },
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                var user = _mapper.Map<UserModel>(response);
+
+                _logger.LogInformation($"{ProcessFlows.GetUserById} request was processed successfully");
+
+                return Ok(user);
+            }
+            catch (RpcException ex)
+            {
+                var httpStatusCode = StatusCodeConverter.FromGrpcToHttp(ex.StatusCode);
+
+                _logger.LogWarning($"{ProcessFlows.GetUserById} request finished with error {ex.Status.Detail}, status code {httpStatusCode}");
 
                 return Problem(ex.Status.Detail, statusCode: httpStatusCode);
             }
