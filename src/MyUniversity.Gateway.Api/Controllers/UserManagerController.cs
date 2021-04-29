@@ -246,6 +246,163 @@ namespace MyUniversity.Gateway.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Update user by id based on user access.
+        /// </summary>
+        /// <remarks>
+        /// Only logged-in users can update user.
+        /// 
+        /// SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// UniversityAdmin -> own university: UniversityAdmin, Teacher, Student.
+        /// 
+        /// Teacher -> own university: Teacher, Student.
+        ///
+        /// Student -> himself.
+        /// 
+        /// Sample request:
+        /// 
+        ///     PUT /api/user/1
+        /// 
+        /// </remarks>
+        /// <returns>Updated user</returns>
+        [HttpPut("/api/users/{id}")]
+        [Authorize(Roles = "SuperAdmin,UniversityAdmin,Teacher,Student")]
+        public async Task<IActionResult> UpdateUserAsync([Range(1, int.MaxValue)] int id, [FromBody] UpdateUserModel updateModel)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.UpdateUser} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            var updateUserRequest = _mapper.Map<UpdateUserRequest>(updateModel);
+            updateUserRequest.Id = id;
+
+            try
+            {
+                var response = await _userClient.UpdateUserAsync(
+                    updateUserRequest,
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                var user = _mapper.Map<UserModel>(response);
+
+                _logger.LogInformation($"{ProcessFlows.UpdateUser} request was processed successfully");
+
+                return Ok(user);
+            }
+            catch (RpcException ex)
+            {
+                return HandleError(ex, ProcessFlows.UpdateUser);
+            }
+        }
+
+        /// <summary>
+        /// Soft delete user by id based on user access.
+        /// </summary>
+        /// <remarks>
+        /// Only logged-in users can delete user.
+        /// 
+        /// SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// UniversityAdmin -> own university: UniversityAdmin, Teacher, Student.
+        /// 
+        /// Teacher -> own university: Teacher, Student.
+        ///
+        /// Sample request:
+        /// 
+        ///     Delete /api/user/1
+        ///
+        ///     {
+        ///         "id": 7,
+        ///         "firstName": "test",
+        ///         "lastName": "test",
+        ///         "emailAddress": "testUA@example.com",
+        ///         "phoneNumber": "+380 (50) 123 4566",
+        ///         "universityId": "11116258-9207-4bdc-b101-fb560cc8cb20",
+        ///         "password": "Admin",
+        ///         "roles": [
+        ///             4
+        ///         ]
+        ///     }
+        /// 
+        /// </remarks>
+        /// <returns>Deleting success</returns>
+        [HttpDelete("/api/users/{id}")]
+        [Authorize(Roles = "SuperAdmin,UniversityAdmin,Teacher")]
+        public async Task<IActionResult> SoftDeleteUserAsync([Range(1, int.MaxValue)] int id)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.SoftDeleteUser} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var response = await _userClient.SoftDeleteUserAsync(
+                    new DeleteUserRequest { Id = id },
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                _logger.LogInformation($"{ProcessFlows.SoftDeleteUser} request was processed successfully");
+
+                return Ok(response);
+            }
+            catch (RpcException ex)
+            {
+                return HandleError(ex, ProcessFlows.SoftDeleteUser);
+            }
+        }
+
+        /// <summary>
+        /// Hard delete user by id based on user access.
+        /// </summary>
+        /// <remarks>
+        /// Only logged-in users can delete user.
+        /// Only soft deleted users can completely deleted.
+        /// 
+        /// SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+        /// 
+        /// Sample request:
+        /// 
+        ///     Delete /api/user/1/hard
+        /// 
+        /// </remarks>
+        /// <returns>Deleting success</returns>
+        [HttpDelete("/api/users/{id}/hard")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> HardDeleteUserAsync([Range(1, int.MaxValue)] int id)
+        {
+            _logger.LogInformation($"Start to process {ProcessFlows.HardDeleteUser} request");
+
+            var accessToken = Request.Headers[HeaderNames.Authorization];
+
+            try
+            {
+                var response = await _userClient.HardDeleteUserAsync(
+                    new DeleteUserRequest { Id = id },
+                    new Metadata
+                    {
+                        {HeaderKeys.AccessToken, accessToken.ToString()}
+                    });
+
+                _logger.LogInformation($"{ProcessFlows.HardDeleteUser} request was processed successfully");
+
+                return Ok(response);
+            }
+            catch (RpcException ex)
+            {
+                return HandleError(ex, ProcessFlows.HardDeleteUser);
+            }
+        }
         #endregion
 
         #region Role

@@ -7,6 +7,9 @@
         public const string GetRoles = "Get roles";
         public const string GetAllUsers = "Get all users";
         public const string GetUserById = "Get user by id";
+        public const string UpdateUser = "Update user";
+        public const string SoftDeleteUser = "Soft delete user";
+        public const string HardDeleteUser = "Hard delete user";
         public const string CreateUniversity = "Create university";
         public const string GetAllUniversities = "Get all universities";
         public const string UpdateUniversity = "Update university";

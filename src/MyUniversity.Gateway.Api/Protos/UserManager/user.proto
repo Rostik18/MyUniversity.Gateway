@@ -7,6 +7,9 @@ service User {
 	rpc LoginUser (LoginRequest) returns (LoginReply);
 	rpc GetAllUsers (GetUsersRequest) returns (GetAllUsersReply);
 	rpc GetUserById (GetUserRequest) returns (UserModelReply);
+	rpc UpdateUser (UpdateUserRequest) returns (UserModelReply);
+	rpc SoftDeleteUser (DeleteUserRequest) returns (DeletingReply);
+	rpc HardDeleteUser (DeleteUserRequest) returns (DeletingReply);
 }
 
 message RegistrationRequest {
@@ -17,6 +20,17 @@ message RegistrationRequest {
 	string password = 5;
 	string universityId = 6;
 	repeated int32 roles = 7;
+}
+
+message UpdateUserRequest {
+	int32 id = 1;
+	string firstName = 2;
+	string lastName = 3;
+	string emailAddress = 4;
+	string phoneNumber = 5;
+	string universityId = 6;
+	string password = 7;
+	repeated int32 roles = 8;
 }
 
 message RegistrationReply {
@@ -63,4 +77,12 @@ message UniversityModelReply {
 message RoleModelReply {
 	int32 id = 1;
 	string role = 2;
+}
+
+message DeleteUserRequest {
+	int32 id = 1;
+}
+
+message DeletingReply {
+	bool deletingSuccess  = 1;
 }
