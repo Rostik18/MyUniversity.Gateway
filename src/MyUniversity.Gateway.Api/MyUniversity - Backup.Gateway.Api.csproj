@@ -4,8 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\VSProjects\My Projects\MyUniversity\MyUniversity.Gateway\src\MyUniversity.Gateway.Api\MyUniversity.Gateway.Api.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MyUniversity.Gateway.Models\MyUniversity.Gateway.Models.csproj" />
   </ItemGroup>
-
+    
   <ItemGroup>
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -35,9 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\UserManager\user.proto" GrpcServices="Client" />
-    <Protobuf Include="Protos\UserManager\role.proto" GrpcServices="Client" />
-    <Protobuf Include="Protos\UserManager\university.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\user.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Protos\UserManager\" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,47 @@
+@startuml
+Title Services relations diagram
+
+skinparam node {
+BackgroundColor white
+BorderColor cornFlowerBlue
+}
+
+skinparam sequence {
+ArrowColor cornflowerblue
+LifeLineBorderColor cornflowerblue
+ParticipantBorderColor CornflowerBlue
+ParticipantBackgroundColor white
+ParticipantFontName Helvetica
+ParticipantFontSize 14
+ParticipantFontColor black
+GroupBorderColor cornflowerBlue
+}
+
+actor "User (UI)" AS User
+rectangle MyUniversity {
+node Gateway
+node "User Manager" AS UM
+node "Resource Manager" AS RM
+node "Faculty Manager" AS FM
+node "Electronic Journal" AS EJ
+node "Monitor Knowledge System" AS MKS
+database UMDB
+database RMDB
+database MKSDB
+database EJDB
+database FMDB
+}
+
+User <-down-> Gateway
+Gateway <-left-> UM
+UM <-down-> UMDB
+Gateway <-right-> RM
+RM <-down-> RMDB
+Gateway <-down-> FM
+FM <-down-> FMDB
+Gateway <-down-> EJ
+EJ <-down-> EJDB
+Gateway <-down-> MKS
+MKS <-down-> MKSDB
+
+@enduml

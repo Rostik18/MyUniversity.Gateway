@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "MyUniversity.Gateway.Role";
+
+service Role {
+	rpc GetRoles (RoleRequest) returns (RolesReply);
+}
+
+message RoleRequest {}
+
+message RolesReply {
+	repeated RoleReply Roles = 1;
+}
+
+message RoleReply {
+	int32 id = 1;
+	string role = 2;
+}

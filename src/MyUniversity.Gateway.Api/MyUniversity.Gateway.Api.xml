@@ -1,0 +1,383 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyUniversity.Gateway.Api</name>
+    </assembly>
+    <members>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.LoginAsync(MyUniversity.Gateway.Models.UserManager.User.LoginUserModel)">
+             <summary>
+             Login into the system.
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /api/login
+                 {
+                    "emailAddress": "Super.Admin@gmail.com",
+                    "password": "Admin"
+                 }
+            
+             </remarks>
+             <param name="loginUserModel"></param>
+             <returns></returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.RegisterAsync(MyUniversity.Gateway.Models.UserManager.User.RegisterUserModel)">
+             <summary>
+             Create a new user.
+             </summary>
+             <remarks>
+             Only logged-in users can create new users.
+             
+             SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             UniversityAdmin -> UniversityAdmin, Teacher, Student.
+             
+             Teacher -> Student.
+            
+             TenantId is optional for SuperAdmin and Service accounts.
+             
+             Sample request:
+             
+                 POST /api/registration
+                 {
+                     "firstName": "Ad",
+                     "lastName": "Min",
+                     "emailAddress": "user@example.com",
+                     "phoneNumber": "+380 (50) 123 4567",
+                     "tenantId": "11116258-9207-4bdc-b101-fb560cc8cb20",
+                     "password": "12345678",
+                     "roles": [
+                         1,
+                         3
+                     ]
+                 }
+            
+             </remarks>
+             <param name="registerUserModel">New user model</param>
+             <returns>Registration success</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetAllUsersAsync">
+             <summary>
+             Gives all available users based on user access.
+             </summary>
+             <remarks>
+             Only logged-in users can get users.
+             
+             SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             UniversityAdmin -> own university: UniversityAdmin, Teacher, Student.
+             
+             Teacher -> own university: Teacher, Student.
+            
+             Sample request:
+             
+                 GET /api/users
+             
+             </remarks>
+             <returns>all available users</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetUserByIdAsync(System.Int32)">
+             <summary>
+             Gives user by id based on user access.
+             </summary>
+             <remarks>
+             Only logged-in users can get user.
+             
+             SuperAdmin -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             Service -> SuperAdmin, Service, UniversityAdmin, Teacher, Student.
+             
+             UniversityAdmin -> own university: UniversityAdmin, Teacher, Student.
+             
+             Teacher -> own university: Teacher, Student.
+            
+             Sample request:
+             
+                 GET /api/user/1
+             
+             </remarks>
+             <returns>Available user by id</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetRolesAsync">
+            <summary>
+            Gives all available roles based on user access.
+            </summary>
+            <returns>available roles</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.CreateUniversityAsync(MyUniversity.Gateway.Models.UserManager.University.CreateUniversityModel)">
+            <summary>
+            Create new university.
+            </summary>
+            <remarks>
+            Only for SuperAdmin
+            </remarks>
+            <returns>created university</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.GetUniversitiesAsync">
+            <summary>
+            Gives all available universities based on user access.
+            </summary>
+            <remarks>
+            SuperAdmin see all universities
+            UniversityAdmin, Teacher and Student its own
+            </remarks>
+            <returns>available universities</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.UpdateUniversityAsync(System.String,MyUniversity.Gateway.Models.UserManager.University.UpdateUniversityModel)">
+            <summary>
+            Update university.
+            </summary>
+            <remarks>
+            Only for SuperAdmin
+            </remarks>
+            <returns>created university</returns>
+        </member>
+        <member name="M:MyUniversity.Gateway.Api.Controllers.UserManagerController.DeleteUniversityAsync(System.String)">
+            <summary>
+            Delete university.
+            </summary>
+            <remarks>
+            Only for SuperAdmin
+            </remarks>
+            <returns>created university</returns>
+        </member>
+        <member name="T:MyUniversity.Gateway.User.UserReflection">
+            <summary>Holder for reflection information generated from Protos/UserManager/user.proto</summary>
+        </member>
+        <member name="P:MyUniversity.Gateway.User.UserReflection.Descriptor">
+            <summary>File descriptor for Protos/UserManager/user.proto</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RegistrationRequest.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RegistrationRequest.PhoneNumberFieldNumber">
+            <summary>Field number for the "phoneNumber" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RegistrationRequest.FirstNameFieldNumber">
+            <summary>Field number for the "firstName" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RegistrationRequest.LastNameFieldNumber">
+            <summary>Field number for the "lastName" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RegistrationRequest.PasswordFieldNumber">
+            <summary>Field number for the "password" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RegistrationRequest.UniversityIdFieldNumber">
+            <summary>Field number for the "universityId" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RegistrationRequest.RolesFieldNumber">
+            <summary>Field number for the "roles" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RegistrationReply.RegistrationSuccessFieldNumber">
+            <summary>Field number for the "registrationSuccess" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.LoginRequest.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.LoginRequest.PasswordFieldNumber">
+            <summary>Field number for the "password" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.LoginReply.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.LoginReply.TokenFieldNumber">
+            <summary>Field number for the "token" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.GetUserRequest.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.GetAllUsersReply.UsersFieldNumber">
+            <summary>Field number for the "users" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UserModelReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UserModelReply.FirstNameFieldNumber">
+            <summary>Field number for the "firstName" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UserModelReply.LastNameFieldNumber">
+            <summary>Field number for the "lastName" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UserModelReply.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UserModelReply.PhoneNumberFieldNumber">
+            <summary>Field number for the "phoneNumber" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UserModelReply.UniversityFieldNumber">
+            <summary>Field number for the "university" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UserModelReply.RolesFieldNumber">
+            <summary>Field number for the "roles" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UniversityModelReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UniversityModelReply.NameFieldNumber">
+            <summary>Field number for the "name" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UniversityModelReply.AddressFieldNumber">
+            <summary>Field number for the "address" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UniversityModelReply.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.UniversityModelReply.PhoneNumberFieldNumber">
+            <summary>Field number for the "phoneNumber" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RoleModelReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.User.RoleModelReply.RoleFieldNumber">
+            <summary>Field number for the "role" field.</summary>
+        </member>
+        <member name="P:MyUniversity.Gateway.User.User.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:MyUniversity.Gateway.User.User.UserClient">
+            <summary>Client for User</summary>
+        </member>
+        <member name="M:MyUniversity.Gateway.User.User.UserClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for User</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.User.User.UserClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for User that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.User.User.UserClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:MyUniversity.Gateway.User.User.UserClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.User.User.UserClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+        <member name="T:MyUniversity.Gateway.Role.RoleReflection">
+            <summary>Holder for reflection information generated from Protos/UserManager/role.proto</summary>
+        </member>
+        <member name="P:MyUniversity.Gateway.Role.RoleReflection.Descriptor">
+            <summary>File descriptor for Protos/UserManager/role.proto</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.Role.RolesReply.RolesFieldNumber">
+            <summary>Field number for the "Roles" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.Role.RoleReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.Role.RoleReply.RoleFieldNumber">
+            <summary>Field number for the "role" field.</summary>
+        </member>
+        <member name="P:MyUniversity.Gateway.Role.Role.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:MyUniversity.Gateway.Role.Role.RoleClient">
+            <summary>Client for Role</summary>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.Role.RoleClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for Role</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.Role.RoleClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for Role that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.Role.RoleClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.Role.RoleClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.Role.Role.RoleClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+        <member name="T:MyUniversity.Gateway.University.UniversityReflection">
+            <summary>Holder for reflection information generated from Protos/UserManager/university.proto</summary>
+        </member>
+        <member name="P:MyUniversity.Gateway.University.UniversityReflection.Descriptor">
+            <summary>File descriptor for Protos/UserManager/university.proto</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.CreateUniversityRequest.NameFieldNumber">
+            <summary>Field number for the "name" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.CreateUniversityRequest.AddressFieldNumber">
+            <summary>Field number for the "address" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.CreateUniversityRequest.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.CreateUniversityRequest.PhoneNumberFieldNumber">
+            <summary>Field number for the "phoneNumber" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.GetUniversitiesReply.UniversitiesFieldNumber">
+            <summary>Field number for the "Universities" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UpdateUniversityRequest.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UpdateUniversityRequest.NameFieldNumber">
+            <summary>Field number for the "name" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UpdateUniversityRequest.AddressFieldNumber">
+            <summary>Field number for the "address" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UpdateUniversityRequest.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UpdateUniversityRequest.PhoneNumberFieldNumber">
+            <summary>Field number for the "phoneNumber" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UniversityModelReply.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UniversityModelReply.NameFieldNumber">
+            <summary>Field number for the "name" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UniversityModelReply.AddressFieldNumber">
+            <summary>Field number for the "address" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UniversityModelReply.EmailAddressFieldNumber">
+            <summary>Field number for the "emailAddress" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.UniversityModelReply.PhoneNumberFieldNumber">
+            <summary>Field number for the "phoneNumber" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.DeleteUniversityRequest.IdFieldNumber">
+            <summary>Field number for the "id" field.</summary>
+        </member>
+        <member name="F:MyUniversity.Gateway.University.DeleteUniversityReply.SuccessFieldNumber">
+            <summary>Field number for the "success" field.</summary>
+        </member>
+        <member name="P:MyUniversity.Gateway.University.University.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:MyUniversity.Gateway.University.University.UniversityClient">
+            <summary>Client for University</summary>
+        </member>
+        <member name="M:MyUniversity.Gateway.University.University.UniversityClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for University</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.University.University.UniversityClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for University that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.University.University.UniversityClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:MyUniversity.Gateway.University.University.UniversityClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:MyUniversity.Gateway.University.University.UniversityClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+    </members>
+</doc>
